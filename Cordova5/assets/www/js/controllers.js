@@ -3,18 +3,7 @@ angular.module('starter.controllers', [])
   .controller('DashCtrl', function ($scope, MyService) {
 
     MyService.initSvg('http://cdn.shopify.com/s/files/1/0496/1029/files/Freesample.svg'); 
-        //  $("#svgContainer").html("");
-        // document.getElementById("svgContainer")
-        //   .appendChild(responce);
-
-        // $("path").click(function (e) {
-        //   console.log("path: ", this.id);
-        //   Chats.initSvg('img/mozilla.svg', function (responce) {
-        //       $("#svgContainer").html("");
-        //       document.getElementById("svgContainer").appendChild(responce);
-        //    });
-        // })
-    
+        
     
 })//controller
 
@@ -42,3 +31,4 @@ angular.module('starter.controllers', [])
     enableFriends: true
   };
 });
+

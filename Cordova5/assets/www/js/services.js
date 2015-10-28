@@ -14,20 +14,104 @@ angular.module('starter.services', [])
         self.initSvg('img/mozilla.svg');
     }
     this.initSvg = function (url) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", url, false);
-      // Following line is just to be on the safe side;
-      // not needed if your server delivers SVG with correct MIME type
-      xhr.overrideMimeType("image/svg+xml");
-      xhr.send("");
-      $("#svgContainer").html("");
-      document.getElementById("svgContainer")
-        .appendChild(xhr.responseXML.documentElement);
-      $("path").click(function (e) {
-        self.method1();
-        console.log("path: ", this.id);
-      });
-    }//initSvg
+    	var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.overrideMimeType("image/svg+xml");
+        xhr.send();
+        xhr.onerror = function(e) {
+      	  console.error(e);
+        }
+        xhr.onreadystatechange=function(){
+      	  console.log(xhr.readyState,xhr.status);
+      	  if(xhr.readyState==4 && (xhr.status==200||xhr.status==0)){
+      		  if(xhr.responseXML.documentElement != null || xhr.responseXML.documentElement != 'null'){
+      		  $("#svgContainer").html("");
+      	      document.getElementById("svgContainer")
+      	        .appendChild(xhr.responseXML.documentElement);
+      	      $('svg').attr('id', 'mobile-svg');
+      	      $("path").click(function (e) {
+      	        self.method1();
+      	        console.log("path: ", this.id);
+      	      });
+      	      self.svgController();  
+      		  }
+      	  }else{
+      		  console.error(xhr);
+      	  }
+        }      
+    },//initSvg
+    this.svgController = function() {
+    	var eventsHandler;
+
+    	eventsHandler = {
+    			haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel']
+    	, init: function(options) {
+    		var instance = options.instance
+    		, initialScale = 1
+    		, pannedX = 0
+    		, pannedY = 0
+
+    		// Init Hammer
+    		// Listen only for pointer and touch events
+    		this.hammer = Hammer(options.svgElement, {
+    			inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+    		})
+
+    		// Enable pinch
+    		this.hammer.get('pinch').set({enable: true})
+
+    		// Handle double tap
+    		this.hammer.on('doubletap', function(ev){
+    			instance.zoomIn()
+    		})
+
+    		// Handle pan
+    		this.hammer.on('panstart panmove', function(ev){
+    			// On pan start reset panned variables
+    			if (ev.type === 'panstart') {
+    				pannedX = 0
+    				pannedY = 0
+    			}
+
+    			// Pan only the difference
+    			instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY})
+    			pannedX = ev.deltaX
+    			pannedY = ev.deltaY
+    		})
+
+    		// Handle pinch
+    		this.hammer.on('pinchstart pinchmove', function(ev){
+    			// On pinch start remember initial zoom
+    			if (ev.type === 'pinchstart') {
+    				initialScale = instance.getZoom()
+    				instance.zoom(initialScale * ev.scale)
+    			}
+
+    			instance.zoom(initialScale * ev.scale)
+
+    		})
+
+    		// Prevent moving the page on some devices when panning over SVG
+    		options.svgElement.addEventListener('touchmove', function(e){ e.preventDefault(); });
+    	}
+
+    	, destroy: function(){
+    		this.hammer.destroy()
+    	}
+    	}
+
+    	// Expose to window namespace for testing purposes
+    	window.panZoom = svgPanZoom('#mobile-svg', {
+    		zoomEnabled: true
+    		, controlIconsEnabled: true
+    		, fit: 1
+    		, center: 1
+    		, customEventsHandler: eventsHandler
+    	});
+    }//svg
+    
+    
+    
   })//sevices
   .factory('Chats', function (MyService) {
     // Might use a resource here that returns a JSON array
