@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Cordova5</string>
+    <string name="hello">Hello World, Cordova5Activity!</string>
+
+</resources>
