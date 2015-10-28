@@ -29,6 +29,15 @@ angular.module('starter.services', [])
       	      document.getElementById("svgContainer")
       	        .appendChild(xhr.responseXML.documentElement);
       	      $('svg').attr('id', 'mobile-svg');
+      	    var h = window.innerHeight;
+      	    var w = window.innerWidth;
+      	  $( window ).width(w);
+  	      if(w < h)
+  	    	  $('svg').height(w);
+  	      else
+  	    	  $('svg').height(w/2);
+  	      
+  	     
       	      $("path").click(function (e) {
       	        self.method1();
       	        console.log("path: ", this.id);
