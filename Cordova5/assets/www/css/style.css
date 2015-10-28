@@ -1,0 +1,13 @@
+/* Empty. Add your own CSS if you like */
+#svgContainer{
+	width: 300px;
+	height: 200px;
+	margin: auto;
+	text-align: center;
+}
+svg{
+	width: 300px;
+	height: 200px;
+	margin: auto;
+	text-align: center;
+}
